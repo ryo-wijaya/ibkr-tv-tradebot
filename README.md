@@ -4,16 +4,6 @@ Trading bot that exposes webhooks meant to be used to connect TradingView alerts
 
 This bot is only configured to trade on SMART eligible exchanges in USD. Extend the bot if you wish to trade other exchanges, currencies, or specialized instruments (like mutual funds).
 
-#### Original Purpose
-
-Stop orders cannot be placed outside of regular trading hours for most/all brokers. This is because the stop price may be easily breached due to low volume and wide bid-ask spreads. Stop limit orders can be used, but there is risk of non-execution in volatile markets.
-
-The idea is to circumvent this by using 3rd party services (like TradingView) to ensure capital preservation via almost 24/7 "stop losses" put in place in the form of constant automated monitoring, which creates sell market orders upon specific price alerts. E.g. If you hold NVDA and it tanks during the pre-market due to sudden bad news that affects its sentiment, you can guarantee a sell market order if it dips below a certain price (configured via a TradingView alert). This guarantees the closing of the position (although likely with some price slippage).
-
-#### Problems
-
-In fast-moving or illiquid markets, the bot may trigger a sell market order at a significantly lower price than expected, e.g. when the stop price is $50 and the stock opens at $25 at the start of the pre-market session, the market order will execute at $25. If this behavior is not desired, extend the bot account for such scenarios.
-
 #### Features
 
 Each trade/account interaction/error with the webhooks/IBKR will result in a Telegram notification.
