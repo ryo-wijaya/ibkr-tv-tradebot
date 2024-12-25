@@ -1,29 +1,34 @@
-### Info
+### Description
 
 Trading bot that exposes webhooks meant to be used to connect TradingView alerts with Interactive Brokers, providing the ability to trigger round-the-clock stop loss strategies.
 
-Meant to be hosted on GCP.
+This bot is only configured to trade on SMART eligible exchanges in USD. Extend the bot if you wish to trade other exchanges, currencies, or specialized instruments (like mutual funds).
 
-### Features
+#### Original Purpose
+
+Stop orders cannot be placed outside of regular trading hours for most/all brokers. This is because the stop price may be easily breached due to low volume and wide bid-ask spreads. Stop limit orders can be used, but there is risk of non-execution in volatile markets.
+
+The idea is to circumvent this by using 3rd party services (like TradingView) to ensure capital preservation via almost 24/7 "stop losses" put in place in the form of constant automated monitoring, which creates sell market orders upon specific price alerts. E.g. If you hold NVDA and it tanks during the pre-market due to sudden bad news that affects its sentiment, you can guarantee a sell market order if it dips below a certain price (configured via a TradingView alert). This guarantees the closing of the position (although likely with some price slippage).
+
+#### Features
 
 Each trade/account interaction/error with the webhooks/IBKR will result in a Telegram notification.
 
 **Webhooks:**
 
 1. Fetch current holdings and send the data via Telegram to a user (smoke test for IBKR Trading API).
-2. Create a sell order at market price for a specific share at a specific quantity.
+2. Create a sell market order for a specific share at a specific quantity.
 
 ### Setup
-
-This bot is only configured to trade on SMART eligible exchanges in USD. Extend the bot if you wish to trade other exchanges, currencies, or specialized instruments (like mutual funds).
 
 #### Pre-requisites
 
 1. Ensure that you have a paid version of TradingView that supports webhooks. You may replace TradingView with another price alert service that can send HTTP POST requests.
 2. Ensure that you have an active and funded IBKR Pro account. API access must be enabled in Trader Workstation (TWS) or IB Gateway.
-3. In TWS, configure API access to 'enable ActiveX and Socket Clients', as well as set the correct port number.
-4. Setup a telegram bot via BotFather. Retrieve the bot token, start a chat, and retrieve the chat id.
-5. Setup the application
+3. For best results, ensure that you are subscribed to some form of real-time US market data, either via TradingView or via broker integration.
+4. In TWS, configure API access to 'enable ActiveX and Socket Clients', as well as set the correct port number.
+5. Setup a telegram bot via BotFather. Retrieve the bot token, start a chat, and retrieve the chat id.
+6. Setup the application
 
 #### Local Application Setup
 
@@ -78,7 +83,7 @@ uvicorn main:app --reload --port 8080
      }
      ```
      You should receive a Telegram message containing your positions. This is a sanity tests for the IBKR API connection.
-   - For a live sell order test, set up the webhook: `http://localhost:8000/webhook/sell-market-order` with payload:
+   - For a live sell market order test, set up the webhook: `http://localhost:8000/webhook/sell-market-order` with payload:
      ```json
      {
        "key": "your-webhook-secret",
