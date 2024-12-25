@@ -6,9 +6,9 @@ Meant to be hosted on GCP.
 
 ### Features
 
-Each trade/account interaction with IBKR will result in a Telegram notification.
+Each trade/account interaction/error with the webhooks/IBKR will result in a Telegram notification.
 
-**Planned Webhooks:**
+**Webhooks:**
 
 1. Fetch current holdings and send the data via Telegram to a user (smoke test for IBKR Trading API).
 2. Create a sell order at market price for a specific share at a specific quantity.
@@ -23,20 +23,48 @@ This bot is only configured to trade on SMART eligible exchanges in USD. Extend 
 2. Ensure that you have an active and funded IBKR Pro account. API access must be enabled in Trader Workstation (TWS) or IB Gateway.
 3. In TWS, configure API access to 'enable ActiveX and Socket Clients', as well as set the correct port number.
 4. Setup a telegram bot via BotFather. Retrieve the bot token, start a chat, and retrieve the chat id.
-5. Export or define the following environment variables. You may generate a webhook secret with the `openssl rand -hex 32` command. Rotate this periodically.
-   ```bash
-       TELEGRAM_BOT_TOKEN=****
-       TELEGRAM_CHAT_ID=****
-       IBKR_HOST=****
-       IBKR_PORT=****
-       CLIENT_ID=****
-       WEBHOOK_SECRET=****
-   ```
-6. Setup the application
+5. Setup the application
 
 #### Local Application Setup
 
-1. Download bot, etc etc
+Requirements: Python 3.9 or later, pip, venv, and OpenSSL (optional)
+
+1. Clone repository
+
+```bash
+git clone https://github.com/ryo-wijaya/ibkr-tv-tradebot
+cd ibkr-tv-tradebot
+```
+
+2. Create and activate virtual environment
+
+```bash
+python -m venv env
+.\env\Scripts\activate (windows) or source ./env/bin/activate (Linux/Mac)
+```
+
+3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Define or export environment variables
+
+```bash
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_CHAT_ID=your-chat-id
+IBKR_HOST=127.0.0.1
+IBKR_PORT=7497
+CLIENT_ID=1001
+WEBHOOK_SECRET=your-secure-webhook-secret
+```
+
+5. Start the application
+
+```bash
+uvicorn main:app --reload --port 8080
+```
 
 #### Usage
 
@@ -73,28 +101,28 @@ If deploying to a server or cloud provider (e.g., GCP, AWS):
 - Use HTTPS for production deployments to secure webhook requests.
 - Periodically rotate sensitive credentials (e.g., WEBHOOK_SECRET, TELEGRAM_BOT_TOKEN).
 
-### Development (helpful commands)
+### Development (helpful commands for me)
 
 - Activate the virtual environment (for windows)
 
 ```bash
-    .\env\Scripts\activate
+.\env\Scripts\activate
 ```
 
 - Run a file from root
 
 ```bash
-    python -m <sub-folder-name>.<file-name>
+python -m <sub-folder-name>.<file-name>
 ```
 
 - Start a local dev server
 
 ```bash
-    uvicorn main:app --reload --port 8080
+uvicorn main:app --reload --port 8080
 ```
 
 - Generate a new 32 byte hexadecimal string (64 characters) to use as webhook secret
 
 ```bash
-    openssl rand -hex 32
+openssl rand -hex 32
 ```
